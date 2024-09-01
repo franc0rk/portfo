@@ -5,10 +5,29 @@ import { assetsMock } from "../../state/mocks/mock-assets";
 import AssetForm from "./AssetForm";
 import AssetCard from "./AssetCard";
 import LocalStorageService from "@/app/services/assetsLocalStorageService";
+import BinanceService from "@/app/services/binanceService";
+import { keyBy } from "lodash";
+import { TickerDictionary } from "@/app/models/ticker";
 
 export default function AssetsList() {
   const [assets, setAssets] = useState<IAsset[]>([]);
+  const [prices, setPrices] = useState<TickerDictionary>({});
   const localStorageService = LocalStorageService.getInstance();
+
+  useEffect(() => {
+    const binanceService = BinanceService.getInstance();
+
+    const fetchTicker = async () => {
+      try {
+        const ticker = await binanceService.getTicker();
+        setPrices(keyBy(ticker, "symbol"));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTicker();
+  }, []);
 
   useEffect(() => {
     const storedAssets = localStorageService.getAssets();
@@ -22,7 +41,7 @@ export default function AssetsList() {
   }, [assets, localStorageService]);
 
   const renderedAssets = assets.map((asset, assetIndex) => (
-    <AssetCard key={assetIndex} asset={asset} />
+    <AssetCard key={assetIndex} asset={asset} prices={prices} />
   ));
 
   function handleSubmitForm(event: IAsset) {
