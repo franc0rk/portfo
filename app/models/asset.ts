@@ -1,4 +1,5 @@
 export interface IAsset {
+  id: number;
   ticker: string;
   amount: number;
   entry: number;

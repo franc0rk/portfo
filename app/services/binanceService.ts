@@ -1,10 +1,6 @@
 // services/binanceService.ts
 import axios from "axios";
-
-interface TickerResponse {
-  symbol: string;
-  price: string;
-}
+import { Ticker } from "../models/ticker";
 
 class BinanceService {
   private static instance: BinanceService;
@@ -21,7 +17,7 @@ class BinanceService {
     return BinanceService.instance;
   }
 
-  async getTicker(): Promise<TickerResponse> {
+  async getTicker(): Promise<Ticker[]> {
     try {
       const response = await axios.get(`${this.baseURL}/ticker/price`);
       return response.data;

@@ -1,22 +1,17 @@
 "use client";
-import { IAsset } from "@/app/models/asset";
-import { useState } from "react";
+import { AssetGroupType, CurrencyType, IAsset } from "@/app/models/asset";
+import { emptyAssetMock } from "@/app/state/mocks/mock-assets";
+import { useEffect, useState } from "react";
 
 interface AssetFormProps {
   onSubmit: (formData: IAsset) => void;
+  assetEditing: IAsset | null;
 }
 
-export default function AssetForm({ onSubmit }: AssetFormProps) {
+export default function AssetForm({ onSubmit, assetEditing }: AssetFormProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState<IAsset>({
-    amount: 0,
-    attachedUrl: "#",
-    currency: "usd",
-    group: "crypto",
-    ticker: "",
-    entry: 0,
-  });
+  const [form, setForm] = useState<IAsset>(emptyAssetMock);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
@@ -25,14 +20,26 @@ export default function AssetForm({ onSubmit }: AssetFormProps) {
       return;
     }
     onSubmit(form);
-    setIsAdding(false); // Optionally close the form after submit
+    setIsAdding(false);
+    setForm(emptyAssetMock);
   }
 
   function isFormValid(form: IAsset): boolean {
     return Boolean(
-      form.ticker && form.currency && form.group && form.amount > 0
+      form.ticker &&
+        form.currency &&
+        form.group &&
+        form.amount > 0 &&
+        form.entry > 0
     );
   }
+
+  useEffect(() => {
+    if (assetEditing) {
+      setForm(assetEditing);
+      setIsAdding(!!assetEditing);
+    }
+  }, [assetEditing]);
 
   if (isAdding) {
     return (
@@ -70,7 +77,9 @@ export default function AssetForm({ onSubmit }: AssetFormProps) {
           <select
             className="bg-transparent text-xs w-full border rounded-md"
             value={form.group}
-            onChange={(e) => setForm({ ...form, group: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, group: e.target.value as AssetGroupType })
+            }
           >
             <option className="bg-black" value="crypto">
               crypto
@@ -97,7 +106,9 @@ export default function AssetForm({ onSubmit }: AssetFormProps) {
           <select
             className="bg-transparent text-xs w-2/4 border rounded-md"
             value={form.currency}
-            onChange={(e) => setForm({ ...form, currency: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, currency: e.target.value as CurrencyType })
+            }
           >
             <option className="bg-black" value="usd">
               usd

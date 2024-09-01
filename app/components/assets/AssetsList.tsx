@@ -7,10 +7,12 @@ import AssetCard from "./AssetCard";
 import LocalStorageService from "@/app/services/assetsLocalStorageService";
 import BinanceService from "@/app/services/binanceService";
 import { keyBy } from "lodash";
-import { TickerDictionary } from "@/app/models/ticker";
+import { Ticker, TickerDictionary } from "@/app/models/ticker";
 
 export default function AssetsList() {
   const [assets, setAssets] = useState<IAsset[]>([]);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [assetEditing, setAssetEditing] = useState<IAsset | null>(null);
   const [prices, setPrices] = useState<TickerDictionary>({});
   const localStorageService = LocalStorageService.getInstance();
 
@@ -19,7 +21,7 @@ export default function AssetsList() {
 
     const fetchTicker = async () => {
       try {
-        const ticker = await binanceService.getTicker();
+        const ticker: Ticker[] = await binanceService.getTicker();
         setPrices(keyBy(ticker, "symbol"));
       } catch (error) {
         console.log(error);
@@ -33,6 +35,8 @@ export default function AssetsList() {
     const storedAssets = localStorageService.getAssets();
     if (storedAssets.length > 0) {
       setAssets(storedAssets);
+    } else {
+      setAssets(assetsMock);
     }
   }, [localStorageService]);
 
@@ -40,20 +44,45 @@ export default function AssetsList() {
     localStorageService.setAssets(assets);
   }, [assets, localStorageService]);
 
-  const renderedAssets = assets.map((asset, assetIndex) => (
-    <AssetCard key={assetIndex} asset={asset} prices={prices} />
+  const renderedAssets = assets.map((asset) => (
+    <AssetCard
+      key={asset.id}
+      asset={asset}
+      prices={prices}
+      onDelete={handleRemoveAsset}
+      onEdit={handleEditAsset}
+    />
   ));
 
-  function handleSubmitForm(event: IAsset) {
-    const updatedAssets = [...assets, event];
+  function handleSubmitForm(event: IAsset): void {
+    let updatedAssets = [...assets];
+
+    if (isEditing) {
+      setAssets(
+        updatedAssets.map((a) => (a.id === assetEditing?.id ? event : a))
+      );
+      return;
+    }
+
+    setAssets([...updatedAssets, event]);
+    setAssetEditing(null);
+  }
+
+  function handleRemoveAsset(asset: IAsset): void {
+    const updatedAssets = assets.filter((a) => a.id !== asset.id);
     setAssets(updatedAssets);
+  }
+
+  function handleEditAsset(asset: IAsset): void {
+    setIsEditing(true);
+    setAssetEditing(asset);
   }
 
   return (
     <div className="flex flex-wrap">
       {renderedAssets}
       <div className="w-32 h-24">
-        <AssetForm onSubmit={handleSubmitForm} />
+        <AssetForm assetEditing={assetEditing} onSubmit={handleSubmitForm} />
       </div>
     </div>
   );
