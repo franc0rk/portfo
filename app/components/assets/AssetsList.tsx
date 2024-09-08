@@ -108,14 +108,14 @@ export default function AssetsList() {
       <div className="w-full">
         <div className="text-xl mb-2">
           PNL:&nbsp;
-          <span className={getAssetPnlStyle(totalPnL)}>
-            ${totalPnL.toFixed(2)}
+          <span className={`text-${getAssetPnlStyle(totalPnL)}`}>
+            ${totalPnL.toFixed(2)}&nbsp;
           </span>
           - Total: ${total.toFixed(2)}
         </div>
       </div>
       {renderedAssets}
-      <div className="w-32 h-24">
+      <div className="w-48 h-48 border-2 bg-gray-900 border-gray-700 rounded-md">
         <AssetForm assetEditing={assetEditing} onSubmit={handleSubmitForm} />
       </div>
     </div>
