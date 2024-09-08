@@ -19,7 +19,7 @@ export default function AssetForm({ onSubmit, assetEditing }: AssetFormProps) {
       setError("Invalid form");
       return;
     }
-    onSubmit(form);
+    onSubmit({ ...form, id: Math.floor(Math.random() * 10000) + 9 });
     setIsAdding(false);
     setForm(emptyAssetMock);
   }

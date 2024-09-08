@@ -8,6 +8,7 @@ import LocalStorageService from "@/app/services/assetsLocalStorageService";
 import BinanceService from "@/app/services/binanceService";
 import { keyBy } from "lodash";
 import { Ticker, TickerDictionary } from "@/app/models/ticker";
+import { getAssetPnlLabelStyle } from "@/app/utils/styles";
 
 export default function AssetsList() {
   const [assets, setAssets] = useState<IAsset[]>([]);
@@ -44,6 +45,26 @@ export default function AssetsList() {
     localStorageService.setAssets(assets);
   }, [assets, localStorageService]);
 
+  const calculateTotalPnL = () => {
+    return assets.reduce((totalPnL, asset) => {
+      const assetTickerPrice: number = prices[asset.ticker]
+        ? Number(prices[asset.ticker].price)
+        : 0;
+      const assetPnl = (assetTickerPrice - asset.entry) * asset.amount;
+      return totalPnL + assetPnl;
+    }, 0);
+  };
+
+  const calculateTotal = () => {
+    return assets.reduce((totalPnL, asset) => {
+      const assetTickerPrice: number = prices[asset.ticker]
+        ? Number(prices[asset.ticker].price)
+        : 0;
+      const assetPnl = assetTickerPrice * asset.amount;
+      return totalPnL + assetPnl;
+    }, 0);
+  };
+
   const renderedAssets = assets.map((asset) => (
     <AssetCard
       key={asset.id}
@@ -61,6 +82,7 @@ export default function AssetsList() {
       setAssets(
         updatedAssets.map((a) => (a.id === assetEditing?.id ? event : a))
       );
+      setIsEditing(false);
       return;
     }
 
@@ -78,8 +100,20 @@ export default function AssetsList() {
     setAssetEditing(asset);
   }
 
+  const totalPnL = calculateTotalPnL();
+  const total = calculateTotal();
+
   return (
     <div className="flex flex-wrap">
+      <div className="w-full">
+        <div className="text-xl mb-2">
+          PNL:&nbsp;
+          <span className={getAssetPnlLabelStyle(totalPnL)}>
+            ${totalPnL.toFixed(2)}
+          </span>
+          - Total: ${total.toFixed(2)}
+        </div>
+      </div>
       {renderedAssets}
       <div className="w-32 h-24">
         <AssetForm assetEditing={assetEditing} onSubmit={handleSubmitForm} />
