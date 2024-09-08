@@ -1,14 +1,14 @@
 enum AssetPnlLabelStyle {
-  PossibleTrendChangeStatus = "text-red-600 text-lg",
-  CorrectionStatus = "text-purple-600",
-  PumpStatus = "text-green-500",
-  TakeProfitStatus = "text-green-800 text-xl",
-  TwoX = "text-yellow-500 text-2xl",
-  ThreeX = "text-yellow-600 text-3xl",
-  FourX = "text-yellow-700 text-4xl",
-  FiveX = "text-yellow-800 text-5xl",
-  SixX = "text-yellow-900 text-6xl",
-  TenX = "text-pink-900 text-6xl",
+  PossibleTrendChangeStatus = "red-600",
+  CorrectionStatus = "purple-600",
+  PumpStatus = "green-500",
+  TakeProfitStatus = "green-800",
+  TwoX = "yellow-500",
+  ThreeX = "yellow-600",
+  FourX = "yellow-700",
+  FiveX = "yellow-800",
+  SixX = "yellow-900",
+  TenX = "pink-900",
 }
 
 const styleConditions: Record<AssetPnlLabelStyle, (value: number) => boolean> =
@@ -25,7 +25,7 @@ const styleConditions: Record<AssetPnlLabelStyle, (value: number) => boolean> =
     [AssetPnlLabelStyle.TenX]: (value) => value >= 1000,
   };
 
-export function getAssetPnlLabelStyle(value: number): string {
+export function getAssetPnlStyle(value: number): string {
   for (const [style, condition] of Object.entries(styleConditions)) {
     if (condition(value)) {
       return style;

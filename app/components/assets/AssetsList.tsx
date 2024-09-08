@@ -8,7 +8,7 @@ import LocalStorageService from "@/app/services/assetsLocalStorageService";
 import BinanceService from "@/app/services/binanceService";
 import { keyBy } from "lodash";
 import { Ticker, TickerDictionary } from "@/app/models/ticker";
-import { getAssetPnlLabelStyle } from "@/app/utils/styles";
+import { getAssetPnlStyle } from "@/app/utils/styles";
 
 export default function AssetsList() {
   const [assets, setAssets] = useState<IAsset[]>([]);
@@ -108,7 +108,7 @@ export default function AssetsList() {
       <div className="w-full">
         <div className="text-xl mb-2">
           PNL:&nbsp;
-          <span className={getAssetPnlLabelStyle(totalPnL)}>
+          <span className={getAssetPnlStyle(totalPnL)}>
             ${totalPnL.toFixed(2)}
           </span>
           - Total: ${total.toFixed(2)}
