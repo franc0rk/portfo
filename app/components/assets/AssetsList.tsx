@@ -115,7 +115,7 @@ export default function AssetsList() {
         </div>
       </div>
       {renderedAssets}
-      <div className="w-48 h-48 border-2 bg-gray-900 border-gray-700 rounded-md">
+      <div className="w-52 h-48 overflow-auto border-2 bg-gray-900 border-gray-700 rounded-md">
         <AssetForm assetEditing={assetEditing} onSubmit={handleSubmitForm} />
       </div>
     </div>

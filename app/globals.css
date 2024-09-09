@@ -31,3 +31,36 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Style for WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(229, 231, 235, 0.8); /* Thumb color */
+  border-radius: 4px; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 231, 235, 1); /* Color of the thumb when hovered */
+}
+
+option {
+  background-color: black;
+}
+
+input:focus {
+  outline: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}

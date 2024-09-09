@@ -6,6 +6,7 @@ export interface IAsset {
   group: AssetGroupType;
   currency: CurrencyType;
   attachedUrl: string;
+  platform: PlatformType;
 }
 
 export type AssetGroupType =
@@ -16,3 +17,5 @@ export type AssetGroupType =
   | "nft";
 
 export type CurrencyType = "usd" | "mxn";
+
+export type PlatformType = "binance" | "bitget" | "gbm" | "other";

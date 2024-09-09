@@ -41,7 +41,7 @@ export default function AssetCard({
       {asset.ticker.includes("BTC") ? (
         <div className="text-xs">{asset.amount.toFixed(4)}</div>
       ) : (
-        <div className="text-xs">({asset.amount.toFixed(2)})</div>
+        <div className="text-xs">({asset.amount.toFixed(1)} shares)</div>
       )}
       <div className="ml-auto">
         <button>
@@ -52,7 +52,7 @@ export default function AssetCard({
   );
 
   return (
-    <div className="w-48 h-48 mb-4 mr-4 border-2 bg-gray-900 border-gray-700 relative rounded-md">
+    <div className="w-52 h-48 mb-4 mr-4 border-2 bg-gray-900 border-gray-700 relative rounded-md">
       <div className="flex flex-col p-2">
         {tickerLabel}
         <div className="text-xs mb-1">
@@ -71,10 +71,8 @@ export default function AssetCard({
           {assetPnlPercentage.toFixed(1)}%
         </div>
         <div className={`font-semibold text-${pnlColorStyle}`}>
-          <span className={`border-b border-dotted border-${pnlColorStyle}`}>
-            PNL:
-          </span>{" "}
-          ${assetPnl.toFixed(2)}
+          <span className="border-b border-dotted">PNL:</span> $
+          {assetPnl.toFixed(2)}
         </div>
         <button
           onClick={() => onEdit(asset)}
