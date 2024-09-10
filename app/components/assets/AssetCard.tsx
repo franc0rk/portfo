@@ -52,46 +52,54 @@ export default function AssetCard({
   );
 
   return (
-    <div className="w-52 h-48 mb-4 mr-4 border-2 bg-gray-900 border-gray-700 relative rounded-md">
-      <div className="flex flex-col p-2">
-        {tickerLabel}
-        <div className="text-xs mb-1">
-          <span className="font-medium border-b border-dotted text-gray-300">
-            Entry:
-          </span>{" "}
-          ${asset.entry}
+    <div className="w-1/6 h-48 mb-4">
+      <div className="m-2 border-2 bg-gray-900 border-gray-700 h-full rounded-md">
+        <div className="flex flex-col h-full p-2">
+          {tickerLabel}
+          <div className="text-xs mb-1">
+            <span className="font-medium border-b border-dotted text-gray-300">
+              Entry:
+            </span>{" "}
+            ${asset.entry}
+          </div>
+          <div className="text-xs mb-1">
+            <span className="font-medium border-b border-dotted text-gray-300">
+              Price:
+            </span>{" "}
+            ${assetTickerPrice.toFixed(4)}
+          </div>
+          <div className={`font-semibold text-${pnlColorStyle}`}>
+            {assetPnlPercentage.toFixed(1)}%
+          </div>
+          <div className={`font-semibold text-${pnlColorStyle}`}>
+            <span className="border-b border-dotted">PNL:</span> $
+            {assetPnl.toFixed(2)}
+          </div>
+          <div className="mt-auto flex">
+            <div className="flex-1">
+              <button
+                onClick={() => onEdit(asset)}
+                className="border-2 border-blue-600 px-2 py-1 text-xs font-bold rounded-full"
+              >
+                <DocumentTextIcon className="size-4 text-blue-400" />
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => onEdit(asset)}
+                className="border-2 border-gray-600 px-2 py-1 text-xs font-bold rounded-full"
+              >
+                <PencilIcon className="size-4 text-gray-400" />
+              </button>
+              <button
+                onClick={() => onDelete(asset)}
+                className="border-2 border-red-600 px-2 py-1 text-xs font-bold rounded-full"
+              >
+                <TrashIcon className="size-4 text-red-400" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="text-xs mb-1">
-          <span className="font-medium border-b border-dotted text-gray-300">
-            Price:
-          </span>{" "}
-          ${assetTickerPrice.toFixed(4)}
-        </div>
-        <div className={`font-semibold text-${pnlColorStyle}`}>
-          {assetPnlPercentage.toFixed(1)}%
-        </div>
-        <div className={`font-semibold text-${pnlColorStyle}`}>
-          <span className="border-b border-dotted">PNL:</span> $
-          {assetPnl.toFixed(2)}
-        </div>
-        <button
-          onClick={() => onEdit(asset)}
-          className="absolute left-2 bottom-2 border-2 border-blue-600 px-2 py-1 text-xs font-bold rounded-full"
-        >
-          <DocumentTextIcon className="size-4 text-blue-400" />
-        </button>
-        <button
-          onClick={() => onEdit(asset)}
-          className="absolute right-12 bottom-2 border-2 border-gray-600 px-2 py-1 text-xs font-bold rounded-full"
-        >
-          <PencilIcon className="size-4 text-gray-400" />
-        </button>
-        <button
-          onClick={() => onDelete(asset)}
-          className="absolute right-2 bottom-2 border-2 border-red-600 px-2 py-1 text-xs font-bold rounded-full"
-        >
-          <TrashIcon className="size-4 text-red-400" />
-        </button>
       </div>
     </div>
   );

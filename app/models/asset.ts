@@ -7,6 +7,8 @@ export interface IAsset {
   currency: CurrencyType;
   attachedUrl: string;
   platform: PlatformType;
+  pnl?: number;
+  pnlPercentage?: number;
 }
 
 export type AssetGroupType =

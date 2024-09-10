@@ -6,3 +6,9 @@ export interface Ticker {
 export interface TickerDictionary {
   [key: string]: Ticker;
 }
+
+export function convertTickerDictionaryToArray(
+  dictionary: TickerDictionary
+): Ticker[] {
+  return Object.values(dictionary);
+}
