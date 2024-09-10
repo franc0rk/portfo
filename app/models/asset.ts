@@ -21,3 +21,7 @@ export type AssetGroupType =
 export type CurrencyType = "usd" | "mxn";
 
 export type PlatformType = "binance" | "bitget" | "gbm" | "other";
+
+export interface GroupedAssets {
+  [key: string]: IAsset[];
+}

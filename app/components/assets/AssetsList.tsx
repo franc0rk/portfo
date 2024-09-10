@@ -1,15 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
-import { IAsset } from "../../models/asset";
+import { GroupedAssets, IAsset } from "../../models/asset";
 import { assetsMock } from "../../state/mocks/mock-assets";
 import AssetForm from "./AssetForm";
 import AssetCard from "./AssetCard";
 import LocalStorageService from "@/app/services/assetsLocalStorageService";
 import BinanceService from "@/app/services/binanceService";
-import { keyBy } from "lodash";
+import { groupBy, keyBy, sortBy } from "lodash";
 import { Ticker, TickerDictionary } from "@/app/models/ticker";
 import { getAssetPnlStyle } from "@/app/utils/styles";
 import ScrollingTopBar from "../ScrollingTopBar";
+import AssetGroupAccordion from "./AssetGroupAccordion";
 
 export default function AssetsList() {
   const [assets, setAssets] = useState<IAsset[]>([]);
@@ -23,11 +24,13 @@ export default function AssetsList() {
 
   const sortAssets = (field: keyof IAsset, order: "asc" | "desc") => {
     setAssets(() => {
-      const sortedAssets = assets.map(withPnl).sort((a, b) => {
-        if (a[field] < b[field]) return order === "asc" ? -1 : 1;
-        if (a[field] > b[field]) return order === "asc" ? 1 : -1;
-        return 0;
-      });
+      const transformedAssets = assets.map(withPnl);
+
+      const sortedAssets = sortBy(transformedAssets, [field]);
+
+      if (order === "desc") {
+        sortedAssets.reverse();
+      }
 
       return sortedAssets;
     });
@@ -63,6 +66,12 @@ export default function AssetsList() {
       setAssets(assetsMock);
     }
   }, [localStorageService]);
+
+  const [groupedAssets, setGroupedAssets] = useState<GroupedAssets>({});
+
+  useEffect(() => {
+    setGroupedAssets(groupBy(assets, "group"));
+  }, [assets]);
 
   useEffect(() => {
     localStorageService.setAssets(assets);
@@ -178,8 +187,10 @@ export default function AssetsList() {
         </div>
       </div>
       {sortControls}
-      {renderedAssets}
-      <div className="w-52 h-48 overflow-auto border-2 bg-gray-900 border-gray-700 rounded-md">
+      <div className="w-full">
+        <AssetGroupAccordion groups={groupedAssets} prices={prices} />
+      </div>
+      <div className="w-52 h-48 mx-auto my-4 overflow-auto border-2 bg-gray-900 border-gray-700 rounded-md">
         <AssetForm assetEditing={assetEditing} onSubmit={handleSubmitForm} />
       </div>
     </div>

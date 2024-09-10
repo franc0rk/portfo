@@ -3,6 +3,7 @@ import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import AppHeader from "./components/AppHeader";
 import AppFooter from "./components/AppFooter";
+import { Providers } from "./providers";
 
 const openSans = Open_Sans({ subsets: ["latin"], display: "swap" });
 
@@ -20,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${openSans.className} bg-gray-950`}>
         <AppHeader />
-        <main className="p-8">{children}</main>
+        <Providers>
+          <main className="p-8">{children}</main>
+        </Providers>
         <AppFooter />
       </body>
     </html>
