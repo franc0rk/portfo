@@ -1,5 +1,5 @@
+import useStore from "@/app/hooks/useStore";
 import { IAsset } from "@/app/models/asset";
-import { TickerDictionary } from "@/app/models/ticker";
 import { getAssetPnlStyle } from "@/app/utils/styles";
 import {
   TrashIcon,
@@ -8,20 +8,16 @@ import {
   PencilIcon,
 } from "@heroicons/react/16/solid";
 import Image from "next/image";
+
 interface AssetCardProps {
   asset: IAsset;
-  prices: TickerDictionary;
   onDelete: (asset: IAsset) => void;
   onEdit: (asset: IAsset) => void;
 }
 
-export default function AssetCard({
-  asset,
-  prices,
-  onDelete,
-  onEdit,
-}: AssetCardProps) {
-  const assetTickerPrice = Number(prices[asset.ticker]?.price);
+export default function AssetCard({ asset, onDelete, onEdit }: AssetCardProps) {
+  const { binanceTickers: tickers } = useStore();
+  const assetTickerPrice = Number(tickers[asset.ticker]?.price);
   const assetPnl = (assetTickerPrice - asset.entry) * asset.amount;
   const assetPnlPercentage = (assetTickerPrice * 100) / asset.entry - 100;
 

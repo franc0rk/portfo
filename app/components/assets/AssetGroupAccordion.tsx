@@ -1,5 +1,4 @@
 import { GroupedAssets, IAsset } from "@/app/models/asset";
-import { TickerDictionary } from "@/app/models/ticker";
 import {
   Accordion,
   AccordionItem,
@@ -8,17 +7,14 @@ import {
   AccordionIcon,
   Box,
 } from "@chakra-ui/react";
-import AssetCard from "./AssetCard";
 import CardViewer from "../CardViewer";
 
 interface AssetGroupsAccordionProps {
   groups: GroupedAssets;
-  prices: TickerDictionary;
 }
 
 export default function AssetGroupAccordion({
   groups,
-  prices,
 }: AssetGroupsAccordionProps) {
   const renderedGroups = Object.entries(groups).map(
     ([groupName, group]: [string, IAsset[]]) => {
@@ -33,11 +29,7 @@ export default function AssetGroupAccordion({
             </AccordionButton>
           </h2>
           <AccordionPanel>
-            <CardViewer
-              prices={prices}
-              assets={group}
-              key={`${groupName}-viewer`}
-            />
+            <CardViewer assets={group} key={`${groupName}-viewer`} />
           </AccordionPanel>
         </AccordionItem>
       );

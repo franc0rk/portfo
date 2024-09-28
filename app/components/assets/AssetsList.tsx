@@ -1,71 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
 import { GroupedAssets, IAsset } from "../../models/asset";
-import { assetsMock } from "../../state/mocks/mock-assets";
 import AssetForm from "./AssetForm";
-import AssetCard from "./AssetCard";
 import LocalStorageService from "@/app/services/assetsLocalStorageService";
-import BinanceService from "@/app/services/binanceService";
-import { groupBy, keyBy, sortBy } from "lodash";
-import { Ticker, TickerDictionary } from "@/app/models/ticker";
-import { getAssetPnlStyle } from "@/app/utils/styles";
-import ScrollingTopBar from "../ScrollingTopBar";
+import { groupBy } from "lodash";
 import AssetGroupAccordion from "./AssetGroupAccordion";
 
-export default function AssetsList() {
-  const [assets, setAssets] = useState<IAsset[]>([]);
+interface AssetsListProps {
+  assets: IAsset[];
+  onSort: (field: keyof IAsset, order: "asc" | "desc") => void;
+}
+
+const localStorageService = LocalStorageService.getInstance();
+
+export default function AssetsList({ assets, onSort }: AssetsListProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [assetEditing, setAssetEditing] = useState<IAsset | null>(null);
-  const [prices, setPrices] = useState<TickerDictionary>({});
-  const localStorageService = LocalStorageService.getInstance();
-
-  const [sortField, setSortField] = useState("name");
-  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
-
-  const sortAssets = (field: keyof IAsset, order: "asc" | "desc") => {
-    setAssets(() => {
-      const transformedAssets = assets.map(withPnl);
-
-      const sortedAssets = sortBy(transformedAssets, [field]);
-
-      if (order === "desc") {
-        sortedAssets.reverse();
-      }
-
-      return sortedAssets;
-    });
-  };
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const [field, order] = event.target.value.split(":");
-    setSortField(field);
-    setSortOrder(order);
-    sortAssets(field as keyof IAsset, order as "asc" | "desc");
+    onSort(field as keyof IAsset, order as "asc" | "desc");
   };
-
-  useEffect(() => {
-    const binanceService = BinanceService.getInstance();
-
-    const fetchTicker = async () => {
-      try {
-        const ticker: Ticker[] = await binanceService.getTicker();
-        setPrices(keyBy(ticker, "symbol"));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchTicker();
-  }, []);
-
-  useEffect(() => {
-    const storedAssets = localStorageService.getAssets();
-    if (storedAssets.length > 0) {
-      setAssets(storedAssets);
-    } else {
-      setAssets(assetsMock);
-    }
-  }, [localStorageService]);
 
   const [groupedAssets, setGroupedAssets] = useState<GroupedAssets>({});
 
@@ -77,72 +32,30 @@ export default function AssetsList() {
     localStorageService.setAssets(assets);
   }, [assets, localStorageService]);
 
-  const calculateTotalPnL = () => {
-    return assets.reduce((totalPnL, asset) => {
-      const assetTickerPrice: number = prices[asset.ticker]
-        ? Number(prices[asset.ticker].price)
-        : 0;
-      const assetPnl = (assetTickerPrice - asset.entry) * asset.amount;
-      return totalPnL + assetPnl;
-    }, 0);
-  };
-
-  const calculateTotal = () => {
-    return assets.reduce((totalPnL, asset) => {
-      const assetTickerPrice: number = prices[asset.ticker]
-        ? Number(prices[asset.ticker].price)
-        : 0;
-      const assetPnl = assetTickerPrice * asset.amount;
-      return totalPnL + assetPnl;
-    }, 0);
-  };
-
-  const renderedAssets = assets.map((asset) => (
-    <AssetCard
-      key={asset.id}
-      asset={asset}
-      prices={prices}
-      onDelete={handleRemoveAsset}
-      onEdit={handleEditAsset}
-    />
-  ));
-
   function handleSubmitForm(event: IAsset): void {
     let updatedAssets = [...assets];
 
     if (isEditing) {
-      setAssets(
-        updatedAssets.map((a) => (a.id === assetEditing?.id ? event : a))
-      );
+      // setAssets(
+      //   updatedAssets.map((a) => (a.id === assetEditing?.id ? event : a))
+      // );
       setIsEditing(false);
       return;
     }
 
-    setAssets([...updatedAssets, event].map(withPnl));
+    // setAssets([...updatedAssets, event].map(withPnl));
     setAssetEditing(null);
-  }
-
-  function withPnl(a: IAsset) {
-    const assetTickerPrice = Number(prices[a.ticker]?.price);
-    return {
-      ...a,
-      pnl: (assetTickerPrice - a.entry) * a.amount,
-      pnlPercentage: (assetTickerPrice * 100) / a.entry - 100,
-    };
   }
 
   function handleRemoveAsset(asset: IAsset): void {
     const updatedAssets = assets.filter((a) => a.id !== asset.id);
-    setAssets(updatedAssets);
+    // setAssets(updatedAssets);
   }
 
   function handleEditAsset(asset: IAsset): void {
     setIsEditing(true);
     setAssetEditing(asset);
   }
-
-  const totalPnL = calculateTotalPnL();
-  const total = calculateTotal();
 
   const sortControls = (
     <div className="w-full flex items-center justify-end my-4 mx-1">
@@ -169,26 +82,9 @@ export default function AssetsList() {
   );
   return (
     <div className="flex flex-wrap relative">
-      <div className="absolute w-full -top-6">
-        <ScrollingTopBar tickers={prices} />
-      </div>
-      <div className="w-full">
-        <h2 className="text-2xl font-bold text-gray-100 text-opacity-80 my-4">
-          Portfolio Name
-        </h2>
-        <div className="text-xl my-2">
-          <span className="font-bold">PNL:</span>
-          <span className={`ml-1 text-${getAssetPnlStyle(totalPnL)}`}>
-            ${totalPnL.toFixed(2)}
-          </span>
-          <span className="mx-2">-</span>
-          <span className="font-bold">Total:</span>
-          <span className="ml-1">${total.toFixed(2)}</span>
-        </div>
-      </div>
       {sortControls}
       <div className="w-full">
-        <AssetGroupAccordion groups={groupedAssets} prices={prices} />
+        <AssetGroupAccordion groups={groupedAssets} />
       </div>
       <div className="w-52 h-48 mx-auto my-4 overflow-auto border-2 bg-gray-900 border-gray-700 rounded-md">
         <AssetForm assetEditing={assetEditing} onSubmit={handleSubmitForm} />

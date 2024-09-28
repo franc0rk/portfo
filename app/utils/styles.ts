@@ -31,5 +31,9 @@ export function getAssetPnlStyle(value: number): string {
       return style;
     }
   }
-  return "text-gray-500";
+  return "gray-500";
+}
+
+export function getPositiveNegativeStyle(value: number): string {
+  return value < 0 ? "red-500" : "green-500";
 }

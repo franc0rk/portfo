@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import AssetCard from "./assets/AssetCard"; // Ensure this path is correct
 import { IAsset } from "@/app/models/asset";
-import { TickerDictionary } from "../models/ticker";
 
 interface CardViewerProps {
   assets: IAsset[];
-  prices: TickerDictionary;
   cardsPerPage?: number;
 }
 
 const CardViewer: React.FC<CardViewerProps> = ({
   assets,
-  prices,
   cardsPerPage = 6,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -37,7 +34,6 @@ const CardViewer: React.FC<CardViewerProps> = ({
           <AssetCard
             key={asset.id}
             asset={asset}
-            prices={prices}
             onDelete={() => null}
             onEdit={() => null}
           />
